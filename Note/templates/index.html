@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django CRUD Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+
+        header {
+            background: #35424a;
+            color: #ffffff;
+            padding-top: 30px;
+            min-height: 70px;
+            border-bottom: #e8491d 3px solid;
+        }
+
+        header a {
+            color: #ffffff;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 16px;
+        }
+
+        header ul {
+            padding: 0;
+            list-style: none;
+            float: right;
+        }
+
+        header ul li {
+            float: left;
+            display: inline;
+            padding: 0 20px 0 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #35424a;
+            padding: 20px 0;
+        }
+
+        .task-list {
+            background: #ffffff;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .task-list ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .task-list li {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .task-list li:last-child {
+            border-bottom: none;
+        }
+
+        .task-list a {
+            margin-left: 10px;
+            text-decoration: none;
+            color: #e8491d;
+        }
+
+        .task-list a:hover {
+            color: #35424a;
+        }
+
+        .form-container {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        form input[type="text"], form textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        form button {
+            background-color: #e8491d;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            background-color: #35424a;
+        }
+
+        .delete-warning {
+            text-align: center;
+            color: red;
+            margin-top: 20px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #35424a;
+            color: #ffffff;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="container">
+        <h1>Task Manager</h1>
+    </div>
+</header>
+
+<div class="container">
+    {% if view_type == 'list' %}
+        <div class="task-list">
+            <h2>Task List</h2>
+            <a href="{% url 'task_create' %}" class="create-btn">Create New Task</a>
+            <ul>
+                {% for task in tasks %}
+                    <li>
+                        {{ task.title }} 
+                        - <a href="{% url 'task_update' task.id %}">Edit</a> 
+                        | <a href="{% url 'task_delete' task.id %}">Delete</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% elif view_type == 'form' %}
+        <div class="form-container">
+            <h2>{% if form.instance.pk %}Edit Task{% else %}Create Task{% endif %}</h2>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Save</button>
+            </form>
+            <a href="{% url 'task_list' %}">Back to Task List</a>
+        </div>
+    {% elif view_type == 'delete' %}
+        <div class="delete-warning">
+            <h2>Are you sure you want to delete "{{ task.title }}"?</h2>
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit">Delete</button>
+            </form>
+            <a href="{% url 'task_list' %}">Cancel</a>
+        </div>
+    {% endif %}
+</div>
+
+<footer>
+    <p>Task Manager - Django CRUD Application</p>
+</footer>
+
+</body>
+</html>
